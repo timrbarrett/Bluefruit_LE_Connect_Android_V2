@@ -103,6 +103,14 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
     protected UartPacketManagerBase mUartData;
     protected List<BlePeripheralUart> mBlePeripheralsUart = new ArrayList<>();
 
+    // TRB
+    private static List<String> mTx = new ArrayList<>();
+    private static List<String> mRx = new ArrayList<>();
+
+    private static String mOutputIfRight;
+    private static String mOutputIfDifferent;
+    private static String mExpectInRx;
+
     private boolean mShowDataInHexFormat;
     private boolean mIsTimestampDisplayMode;
     private boolean mIsEchoEnabled;
@@ -181,6 +189,22 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
 
         mSendButton = view.findViewById(R.id.sendButton);
         mSendButton.setOnClickListener(view12 -> onClickSend());
+
+        // trb
+        Button mInitButton = view.findViewById(R.id.initButton);
+        mInitButton.setOnClickListener(view13 -> {
+            send_expect_right_wrong ("pulses on", "pulses on", "", "init 01 not OK");
+            send_expect_right_wrong ("mock ch2pulse 255", "ch2pulse 255 ready", "" ,"init 02 mock ch2pulse failed");
+            send_expect_right_wrong( "create ch2pulse","ch2pulse 255 created", "", "init 02 ch2pulse failed to create");
+            //sendTextViaUART("pulses on");
+
+            //sendTextViaUART("mock ch2pulse 255");
+            //sendTextViaUART("create ch2pulse");
+
+
+            //sendTextViaUART("pulses on");
+        });
+
 
         final boolean isInMultiUartMode = isInMultiUartMode();
         mSendPeripheralSpinner = view.findViewById(R.id.sendPeripheralSpinner);
@@ -493,6 +517,23 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
         send(newText);
     }
 
+    // trb
+    private  void send_expect_right_wrong(String textToSend, String expectInRx, String outputIfRight, String outputIfDifferent) {
+        //private void sendTextViaUART(String textToSend) {
+        // Add eol
+        if (mIsEolEnabled) { // HACK: I've converted stuff to static
+            // Add newline character if checked
+            textToSend += getEolCharacters();
+        }
+        // do I capture expected, right and wrong and evaluate when RX comes in?
+        mExpectInRx=expectInRx;
+        mOutputIfRight=outputIfRight;
+        mOutputIfDifferent=outputIfDifferent;
+
+        mTx.add(textToSend);
+        send(textToSend);
+
+    }
     // endregion
 
     // region UI
@@ -583,6 +624,17 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
             final int color = colorForPacket(packet);
             final boolean isBold = isFontBoldForPacket(packet);
             final byte[] bytes = packet.getData();
+
+            // trb
+            String receivedLine = BleUtils.bytesToText(bytes, true);
+            mRx.add(receivedLine);
+
+            if (receivedLine.equals(mExpectInRx)) {
+                addTextToSpanBuffer(mTextSpanBuffer, mOutputIfRight, Color.GREEN, false);
+            } else { // test failed
+                addTextToSpanBuffer(mTextSpanBuffer, mOutputIfDifferent, Color.BLUE, false);
+            }
+
             final String formattedData = mShowDataInHexFormat ? BleUtils.bytesToHex2(bytes) : BleUtils.bytesToText(bytes, true);
             addTextToSpanBuffer(mTextSpanBuffer, formattedData, color, isBold);
         }
@@ -590,7 +642,20 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
 
     private static SpannableString stringFromPacket(UartPacket packet, boolean useHexMode, int color, boolean isBold) {
         final byte[] bytes = packet.getData();
-        final String formattedData = useHexMode ? BleUtils.bytesToHex2(bytes) : BleUtils.bytesToText(bytes, true);
+        /*final*/ String formattedData = useHexMode ? BleUtils.bytesToHex2(bytes) : BleUtils.bytesToText(bytes, true);
+        // trb
+        mRx.add(formattedData);
+
+        // test passed or failed
+        if (formattedData.equals(mExpectInRx)) {
+            formattedData+=mOutputIfRight;
+        } else formattedData+=mOutputIfDifferent;
+
+        // clear the comparison strings
+        mExpectInRx="";
+        mOutputIfRight="";
+        mOutputIfDifferent="";
+
         final SpannableString formattedString = new SpannableString(formattedData);
         formattedString.setSpan(new ForegroundColorSpan(color), 0, formattedString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         if (isBold) {
