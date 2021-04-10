@@ -85,8 +85,8 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
     protected Spinner mSendPeripheralSpinner;
 
     // UI TextBuffer (refreshing the text buffer is managed with a timer because a lot of changes can arrive really fast and could stall the main thread)
-    private Handler mUIRefreshTimerHandler = new Handler();
-    private Runnable mUIRefreshTimerRunnable = new Runnable() {
+    private final Handler mUIRefreshTimerHandler = new Handler();
+    private final Runnable mUIRefreshTimerRunnable = new Runnable() {
         @Override
         public void run() {
             if (isUITimerRunning) {
@@ -400,100 +400,86 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
         if (activity == null) {
             return super.onOptionsItemSelected(item);
         }
+        int itemId = item.getItemId();
+        //switch (item.getItemId()) {
+        //    case R.id.action_help:
+        if (itemId == R.id.action_help) {
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            CommonHelpFragment helpFragment = CommonHelpFragment.newInstance(getString(R.string.uart_help_title), getString(R.string.uart_help_text_android));
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction()
+                    .replace(R.id.contentLayout, helpFragment, "Help");
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+            return true;
 
-        switch (item.getItemId()) {
-            case R.id.action_help: {
-                FragmentManager fragmentManager = activity.getSupportFragmentManager();
-                CommonHelpFragment helpFragment = CommonHelpFragment.newInstance(getString(R.string.uart_help_title), getString(R.string.uart_help_text_android));
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction()
-                        .replace(R.id.contentLayout, helpFragment, "Help");
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-                return true;
-            }
+        } else if (itemId == R.id.action_mqttsettings) {
+           // case R.id.action_mqttsettings: {
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            MqttSettingsFragment mqttSettingsFragment = MqttSettingsFragment.newInstance();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction()
+                    .replace(R.id.contentLayout, mqttSettingsFragment, "MqttSettings");
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+            return true;
 
-            case R.id.action_mqttsettings: {
-                FragmentManager fragmentManager = activity.getSupportFragmentManager();
-                MqttSettingsFragment mqttSettingsFragment = MqttSettingsFragment.newInstance();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction()
-                        .replace(R.id.contentLayout, mqttSettingsFragment, "MqttSettings");
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-                return true;
-            }
+        } else if (itemId == R.id.action_displaymode_timestamp) {
+            setDisplayFormatToTimestamp(true);
+            invalidateTextView();
+            activity.invalidateOptionsMenu();
+            return true;
 
-            case R.id.action_displaymode_timestamp: {
-                setDisplayFormatToTimestamp(true);
-                invalidateTextView();
-                activity.invalidateOptionsMenu();
-                return true;
-            }
+        } else if (itemId == R.id.action_displaymode_text) {
+            setDisplayFormatToTimestamp(false);
+            invalidateTextView();
+            activity.invalidateOptionsMenu();
+            return true;
 
-            case R.id.action_displaymode_text: {
-                setDisplayFormatToTimestamp(false);
-                invalidateTextView();
-                activity.invalidateOptionsMenu();
-                return true;
-            }
+        } else if (itemId == R.id.action_datamode_hex) {
+            setShowDataInHexFormat(true);
+            invalidateTextView();
+            activity.invalidateOptionsMenu();
+            return true;
 
-            case R.id.action_datamode_hex: {
-                setShowDataInHexFormat(true);
-                invalidateTextView();
-                activity.invalidateOptionsMenu();
-                return true;
-            }
+        } else if (itemId == R.id.action_datamode_ascii) {
+            setShowDataInHexFormat(false);
+            invalidateTextView();
+            activity.invalidateOptionsMenu();
+            return true;
 
-            case R.id.action_datamode_ascii: {
-                setShowDataInHexFormat(false);
-                invalidateTextView();
-                activity.invalidateOptionsMenu();
-                return true;
-            }
+        } else if (itemId ==  R.id.action_echo) {
+            setEchoEnabled(!mIsEchoEnabled);
+            activity.invalidateOptionsMenu();
+            return true;
 
-            case R.id.action_echo: {
-                setEchoEnabled(!mIsEchoEnabled);
-                activity.invalidateOptionsMenu();
-                return true;
-            }
+        } else if (itemId == R.id.action_eol) {
+            mIsEolEnabled = !mIsEolEnabled;
+            activity.invalidateOptionsMenu();
+            return true;
 
-            case R.id.action_eol: {
-                mIsEolEnabled = !mIsEolEnabled;
-                activity.invalidateOptionsMenu();
-                return true;
-            }
+        } else if (itemId == R.id.action_eolmode_n) {
+            mEolCharactersId = 0;
+            activity.invalidateOptionsMenu();
+            return true;
 
-            case R.id.action_eolmode_n: {
-                mEolCharactersId = 0;
-                activity.invalidateOptionsMenu();
-                return true;
-            }
-
-            case R.id.action_eolmode_r: {
+        } else if (itemId == R.id.action_eolmode_r) {
                 mEolCharactersId = 1;
                 activity.invalidateOptionsMenu();
                 return true;
-            }
 
-            case R.id.action_eolmode_nr: {
+        } else if (itemId == R.id.action_eolmode_nr) {
                 mEolCharactersId = 2;
                 activity.invalidateOptionsMenu();
                 return true;
-            }
-
-            case R.id.action_eolmode_rn: {
+        } else if (itemId == R.id.action_eolmode_rn) {
                 mEolCharactersId = 3;
                 activity.invalidateOptionsMenu();
                 return true;
-            }
-
-            case R.id.action_export: {
+        } else if (itemId == R.id.action_export) {
                 export();
                 return true;
-            }
-
-            default: {
+        } else {
                 return super.onOptionsItemSelected(item);
-            }
+
         }
     }
 
@@ -549,10 +535,12 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
 
     private void addTextToSpanBuffer(SpannableStringBuilder spanBuffer, String text, int color, boolean isBold) {
         final int from = spanBuffer.length();
-        spanBuffer.append(text);
-        spanBuffer.setSpan(new ForegroundColorSpan(color), from, from + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        if (isBold) {
-            spanBuffer.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), from, from + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (!(text==null)) {
+            spanBuffer.append(text);
+            spanBuffer.setSpan(new ForegroundColorSpan(color), from, from + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (isBold) {
+                spanBuffer.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), from, from + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
         }
     }
 
