@@ -41,6 +41,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.adafruit.bluefruit.le.connect.R;
+import com.adafruit.bluefruit.le.connect.app.JavaLisp;
 import com.adafruit.bluefruit.le.connect.ble.BleUtils;
 import com.adafruit.bluefruit.le.connect.ble.UartPacket;
 import com.adafruit.bluefruit.le.connect.ble.UartPacketManagerBase;
@@ -110,6 +111,13 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
     private static String mOutputIfRight;
     private static String mOutputIfDifferent;
     private static String mExpectInRx;
+
+    private LObj gEnv= Evaluator.globalEnv();
+
+    private int startRxGeneration =-1;
+    private int startChar=-1;
+    private int endRxGeneration=-1;
+    private int endChar=-1;
 
     private boolean mShowDataInHexFormat;
     private boolean mIsTimestampDisplayMode;
@@ -196,6 +204,7 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
             send_expect_right_wrong ("pulses on", "pulses on", "", "init 01 not OK");
             send_expect_right_wrong ("mock ch2pulse 255", "ch2pulse 255 ready", "" ,"init 02 mock ch2pulse failed");
             send_expect_right_wrong( "create ch2pulse","ch2pulse 255 created", "", "init 02 ch2pulse failed to create");
+            send_expect_right_wrong("switchon powermon", "(", "not sure","");
             //sendTextViaUART("pulses on");
 
             //sendTextViaUART("mock ch2pulse 255");
@@ -383,6 +392,8 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
         MenuItem selectedEolCharacterMenuItem = eolModeSubMenu.findItem(selectedEolCharactersSubMenuId);
         selectedEolCharacterMenuItem.setChecked(true);
 
+        // initialise JavaLisp instance for fragment
+        LObj gEnv = Evaluator.globalEnv();      // to be used by evaluate
 
     }
 
@@ -615,13 +626,46 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
 
             // trb
             String receivedLine = BleUtils.bytesToText(bytes, true);
-            mRx.add(receivedLine);
+            mRx.add(receivedLine); // store rx line in a history array
+
+            // currently can only handle single depth of paren
+            if (startRxGeneration>-1) { // we've received more program before the closing brace
+                startRxGeneration++;
+            }
+
+            // i need to accumulate the bits received that are enclosed in parentheses
+            // int startRxGeneration, startChar, endRxGeneration, endChar
+            String evaluatedOutput;
+            // start collecting
+            if (startRxGeneration==-1 && receivedLine.contains("(") ) {
+                startChar = receivedLine.indexOf("(");
+                startRxGeneration=0;
+            }
+             // end collecting
+            if (startRxGeneration>-1 && receivedLine.contains(")") ) {
+                endChar = receivedLine.indexOf(")");
+                // send for evaluation
+                String firstline;
+                int firstGen = mRx.size()-startRxGeneration;
+                firstGen -=1;
+                firstline = mRx.get(firstGen);
+                StringBuilder toEvaluate = new StringBuilder( firstline.substring( firstline.indexOf("("), firstline.length()-1) );
+
+                evaluatedOutput = Evaluator.eval(Reader.read(receivedLine).obj, gEnv).toString(); // try to evaluate it.
+                // if there is an output ...
+                if (evaluatedOutput.length() > 0) {
+                    addTextToSpanBuffer(mTextSpanBuffer, evaluatedOutput, Color.DKGRAY, false);
+                }
+            }
+
+            evaluatedOutput="";
 
             if (receivedLine.equals(mExpectInRx)) {
                 addTextToSpanBuffer(mTextSpanBuffer, mOutputIfRight, Color.GREEN, false);
             } else { // test failed
                 addTextToSpanBuffer(mTextSpanBuffer, mOutputIfDifferent, Color.BLUE, false);
             }
+            // end trb
 
             final String formattedData = mShowDataInHexFormat ? BleUtils.bytesToHex2(bytes) : BleUtils.bytesToText(bytes, true);
             addTextToSpanBuffer(mTextSpanBuffer, formattedData, color, isBold);
