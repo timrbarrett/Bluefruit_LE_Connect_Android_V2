@@ -202,6 +202,7 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
         Button mInitButton = view.findViewById(R.id.initButton);
         mInitButton.setOnClickListener(view13 -> {
             send_expect_right_wrong ("pulses on", "pulses on", "", "init 01 not OK");
+            send_expect_right_wrong ("rdac on", "rdac on", "", "init 01 not OK");
             send_expect_right_wrong ("mock ch2pulse 255", "ch2pulse 255 ready", "" ,"init 02 mock ch2pulse failed");
             send_expect_right_wrong( "create ch2pulse","ch2pulse 255 created", "", "init 02 ch2pulse failed to create");
             send_expect_right_wrong("switchon powermon", "(", "not sure","");
@@ -214,7 +215,63 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
             //sendTextViaUART("pulses on");
         });
 
+        // channel 1
+        Button mIncCh1Crs = view.findViewById(R.id.incch1crs);
+        mIncCh1Crs.setOnClickListener(view14 -> {
+            send_expect_right_wrong ("create ch1coarseinc", "", "", "");
+        });
+        Button mIncCh1Adj = view.findViewById(R.id.incch1adj);
+        mIncCh1Adj.setOnClickListener(view15 -> {
+            send_expect_right_wrong ("create ch1adjinc", "", "", "");
+        });
+        Button mDecCh1Crs = view.findViewById(R.id.decch1crs);
+        mDecCh1Crs.setOnClickListener(view16 -> {
+            send_expect_right_wrong ("create ch1coarsedec", "", "", "");
+        });
+        Button mDecCh1Adj = view.findViewById(R.id.decch1adj);
+        mDecCh1Adj.setOnClickListener(view17 -> {
+            send_expect_right_wrong ("create ch1adjdec", "", "", "");
+        });
+        Button mMapToTA = view.findViewById(R.id.ch1mapta);
+        mMapToTA.setOnClickListener(view18 -> {
+            send_expect_right_wrong ("mock ch1place 33", "", "", "");
+            send_expect_right_wrong ("create ch1place", "", "", "");
+        });
+        Button mMapToNil = view.findViewById(R.id.ch1mapnil);
+        mMapToNil.setOnClickListener(view19 -> {
+            send_expect_right_wrong ("mock ch1place 0", "", "", "");
+            send_expect_right_wrong ("create ch1place", "", "", "");
+        });
 
+        Button mPulseOn = view.findViewById(R.id.pulseon);
+        mPulseOn.setOnClickListener(view20 -> {
+            send_expect_right_wrong ("mock cadence 6", "", "", "");
+            send_expect_right_wrong ("create cadence", "", "", "");
+        });
+        Button mPulseOff = view.findViewById(R.id.pulseoff);
+        mPulseOff.setOnClickListener(view21 -> {
+            send_expect_right_wrong ("mock cadence 0", "", "", "");
+            send_expect_right_wrong ("create cadence", "", "", "");
+        });
+        /*
+        // channel 2
+        Button mIncCh2Crs = view.findViewById(R.id.incch2crs);
+        mIncCh2Crs.setOnClickListener(view14 -> {
+            send_expect_right_wrong ("create ch2coarseinc", "", "", "");
+        });
+        Button mIncCh1Adj = view.findViewById(R.id.incch1adj);
+        mIncCh1Adj.setOnClickListener(view14 -> {
+            send_expect_right_wrong ("create ch1adjinc", "", "", "");
+        });
+        Button mDecCh1Crs = view.findViewById(R.id.decch1crs);
+        mIncCh1Crs.setOnClickListener(view14 -> {
+            send_expect_right_wrong ("create ch1coarsedec", "", "", "");
+        });
+        Button mDecCh1Adj = view.findViewById(R.id.decch1adj);
+        mIncCh1Adj.setOnClickListener(view14 -> {
+            send_expect_right_wrong ("create ch1adjdec", "", "", "");
+        });
+        */
         final boolean isInMultiUartMode = isInMultiUartMode();
         mSendPeripheralSpinner = view.findViewById(R.id.sendPeripheralSpinner);
         mSendPeripheralSpinner.setVisibility(isInMultiUartMode ? View.VISIBLE : View.GONE);
