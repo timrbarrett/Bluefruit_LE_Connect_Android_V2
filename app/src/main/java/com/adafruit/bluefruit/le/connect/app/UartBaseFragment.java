@@ -52,6 +52,7 @@ import com.adafruit.bluefruit.le.connect.utils.KeyboardUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -225,7 +226,20 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
             send_expect_right_wrong ("mock ch1adj 128", "", "" ,"");
             send_expect_right_wrong( "create ch1adj","", "", "");
 
-            send_expect_right_wrong("switchon powermon", "(", "not sure","");
+            Calendar calendar= Calendar.getInstance();
+
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            //long unixTime = System.currentTimeMillis()/1000;
+            send_expect_right_wrong("utc d "+year+" "+month+" "+day, "", "not sure","");
+
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            int second = calendar.get(Calendar.SECOND);
+            send_expect_right_wrong("utc t "+hour+" "+minute+" "+second, "", "not sure","");
+
+            send_expect_right_wrong("switchon powermon", "", "not sure","");
             //sendTextViaUART("pulses on");
 
             //sendTextViaUART("mock ch2pulse 255");
@@ -235,6 +249,16 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
             //sendTextViaUART("pulses on");
         });
 
+        Button mExp1 = view.findViewById(R.id.exp1);
+        mExp1.setOnClickListener(view22 -> {
+
+            Calendar calendar= Calendar.getInstance();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            int second = calendar.get(Calendar.SECOND);
+            send_expect_right_wrong("utc t "+hour+" "+minute+" "+second, "", "not sure","");
+            
+        });
         // channel 1
         Button mIncCh1Crs = view.findViewById(R.id.incch1crs);
         mIncCh1Crs.setOnClickListener(view14 -> {
