@@ -92,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#FFC107"
-                    android:text="Exp1" />
+                    android:text="1:51 2:52" />
 
                 <Button
                     android:id="@+id/pulseoff"
@@ -138,8 +138,8 @@
                     android:id="@+id/incch2adj"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#FF5722"
-                    android:text="incch2adj" />
+                    android:backgroundTint="#FFC107"
+                    android:text="1:51 2:53" />
             </TableRow>
 
             <TableRow
@@ -171,8 +171,9 @@
                     android:id="@+id/decch2adj"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#8BC34A"
-                    android:text="decch1adj" />
+                    android:backgroundTint="#FFC107"
+                    android:text="1:51 2:50
+" />
             </TableRow>
 
             <TableRow

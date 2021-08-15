@@ -205,7 +205,7 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
             send_expect_right_wrong ("rdac on", "rdac on", "", "init 01 not OK");
             send_expect_right_wrong ("pulses on", "pulses on", "", "init 01 not OK");
 
-            send_expect_right_wrong ("mock ch1place 53", "", "", "");
+            send_expect_right_wrong ("mock ch1place 51", "", "", "");
             send_expect_right_wrong ("create ch1place", "", "", "");
             send_expect_right_wrong ("mock ch1pulse 255", "", "" ,"");
             send_expect_right_wrong( "create ch1pulse","", "", "");
@@ -214,7 +214,7 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
             send_expect_right_wrong ("mock ch1coarse 128", "", "" ,"");
             send_expect_right_wrong( "create ch1coarse","", "", "");
 
-            send_expect_right_wrong ("mock ch2place 33", "", "", "");
+            send_expect_right_wrong ("mock ch2place 31", "", "", "");
             send_expect_right_wrong ("create ch2place", "", "", "");
             send_expect_right_wrong ("mock ch2pulse 255", "", "" ,"");
             send_expect_right_wrong( "create ch2pulse","", "", "");
@@ -251,13 +251,12 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
 
         Button mExp1 = view.findViewById(R.id.exp1);
         mExp1.setOnClickListener(view22 -> {
+            //send_expect_right_wrong("switchon powersave3", "", "not sure","");
 
-            Calendar calendar= Calendar.getInstance();
-            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            int minute = calendar.get(Calendar.MINUTE);
-            int second = calendar.get(Calendar.SECOND);
-            send_expect_right_wrong("utc t "+hour+" "+minute+" "+second, "", "not sure","");
-            
+            send_expect_right_wrong ("mock ch1place 51", "", "", "");
+            send_expect_right_wrong ("create ch1place", "", "", "");
+            send_expect_right_wrong ("mock ch2place 52", "", "", "");
+            send_expect_right_wrong ("create ch2place", "", "", "");
         });
         // channel 1
         Button mIncCh1Crs = view.findViewById(R.id.incch1crs);
@@ -294,7 +293,39 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
         });
         Button mIncCh2Adj = view.findViewById(R.id.incch2adj);
         mIncCh2Adj.setOnClickListener(view15 -> {
-            send_expect_right_wrong ("create ch2adjinc", "", "", "");
+
+            /*
+            send_expect_right_wrong ("rdac off", "rdac on", "", "init 01 not OK");
+            send_expect_right_wrong ("pulses off", "pulses on", "", "init 01 not OK");
+
+            send_expect_right_wrong ("mock ch1place 0", "", "", "");
+            send_expect_right_wrong ("create ch1place", "", "", "");
+            send_expect_right_wrong ("mock ch1pulse 0", "", "" ,"");
+            send_expect_right_wrong( "create ch1pulse","", "", "");
+            send_expect_right_wrong ("mock ch1freq 0", "", "" ,"");
+            send_expect_right_wrong( "create ch1freq","", "", "");
+            send_expect_right_wrong ("mock ch1coarse 0", "", "" ,"");
+            send_expect_right_wrong( "create ch1coarse","", "", "");
+
+            send_expect_right_wrong ("mock ch2place 0", "", "", "");
+            send_expect_right_wrong ("create ch2place", "", "", "");
+            send_expect_right_wrong ("mock ch2pulse 0", "", "" ,"");
+            send_expect_right_wrong( "create ch2pulse","", "", "");
+            send_expect_right_wrong ("mock ch2freq 0", "", "" ,"");
+            send_expect_right_wrong( "create ch2freq","", "", "");
+            send_expect_right_wrong ("mock ch2coarse 0", "", "" ,"");
+            send_expect_right_wrong( "create ch1coarse","", "", "");
+
+            send_expect_right_wrong ("mock ch1adj 0", "", "" ,"");
+            send_expect_right_wrong( "create ch1adj","", "", "");
+            send_expect_right_wrong ("switchon powersave1", "", "", "");
+
+             */
+
+            send_expect_right_wrong ("mock ch1place 51", "", "", "");
+            send_expect_right_wrong ("create ch1place", "", "", "");
+            send_expect_right_wrong ("mock ch2place 53", "", "", "");
+            send_expect_right_wrong ("create ch2place", "", "", "");
         });
         Button mDecCh2Crs = view.findViewById(R.id.decch2crs);
         mDecCh2Crs.setOnClickListener(view16 -> {
@@ -302,7 +333,12 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
         });
         Button mDecCh2Adj = view.findViewById(R.id.decch2adj);
         mDecCh2Adj.setOnClickListener(view17 -> {
-            send_expect_right_wrong ("create ch2adjdec", "", "", "");
+            //send_expect_right_wrong ("switchon powersave2", "", "", "");
+
+            send_expect_right_wrong ("mock ch1place 51", "", "", "");
+            send_expect_right_wrong ("create ch1place", "", "", "");
+            send_expect_right_wrong ("mock ch2place 50", "", "", "");
+            send_expect_right_wrong ("create ch2place", "", "", "");
         });
         Button mMapToHS = view.findViewById(R.id.ch2maphs);
         mMapToHS.setOnClickListener(view18 -> {
