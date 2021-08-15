@@ -253,10 +253,21 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
         mExp1.setOnClickListener(view22 -> {
             //send_expect_right_wrong("switchon powersave3", "", "not sure","");
 
-            send_expect_right_wrong ("mock ch1place 51", "", "", "");
-            send_expect_right_wrong ("create ch1place", "", "", "");
-            send_expect_right_wrong ("mock ch2place 52", "", "", "");
-            send_expect_right_wrong ("create ch2place", "", "", "");
+            send_expect_right_wrong ("(defvar ers 0)", "", "", "");
+            send_expect_right_wrong ("(defun teq (a b)" +
+                    "  (cond" +
+                    "   ((and (stringp a) (stringp b)) (string= a b))" +
+                    "   ((and (atom a) (atom b)) (eq a b))" +
+                    "   ((null a) nil)" +
+                    "   ((null b) nil)" +
+                    "   (t (and " +
+                    "       (teq (car a) (car b)) " +
+                    "       (teq (cdr a) (cdr b))))))", "", "", "");
+            send_expect_right_wrong ("(defun aeq (tst x y)" +
+                    "  (unless (teq x y)" +
+                    "    (incf ers)" +
+                    "    (princ tst) (princ '=) (princ x) (princ '/) y))", "", "", "");
+            send_expect_right_wrong ("(aeq '* 9 (* -3 -3))", "", "", "");
         });
         // channel 1
         Button mIncCh1Crs = view.findViewById(R.id.incch1crs);
@@ -322,10 +333,12 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
 
              */
 
-            send_expect_right_wrong ("mock ch1place 51", "", "", "");
-            send_expect_right_wrong ("create ch1place", "", "", "");
-            send_expect_right_wrong ("mock ch2place 53", "", "", "");
-            send_expect_right_wrong ("create ch2place", "", "", "");
+            //send_expect_right_wrong ("mock ch1place 51", "", "", "");
+            //send_expect_right_wrong ("create ch1place", "", "", "");
+            //send_expect_right_wrong ("mock ch2place 53", "", "", "");
+            //send_expect_right_wrong ("create ch2place", "", "", "");
+
+            send_expect_right_wrong ("(aeq '* 32580 (* 180 181))", "", "", "");
         });
         Button mDecCh2Crs = view.findViewById(R.id.decch2crs);
         mDecCh2Crs.setOnClickListener(view16 -> {
@@ -335,10 +348,15 @@ public abstract class UartBaseFragment extends ConnectedPeripheralFragment imple
         mDecCh2Adj.setOnClickListener(view17 -> {
             //send_expect_right_wrong ("switchon powersave2", "", "", "");
 
-            send_expect_right_wrong ("mock ch1place 51", "", "", "");
-            send_expect_right_wrong ("create ch1place", "", "", "");
-            send_expect_right_wrong ("mock ch2place 50", "", "", "");
-            send_expect_right_wrong ("create ch2place", "", "", "");
+            //send_expect_right_wrong ("mock ch1place 51", "", "", "");
+            //send_expect_right_wrong ("create ch1place", "", "", "");
+            //send_expect_right_wrong ("mock ch2place 50", "", "", "");
+            //send_expect_right_wrong ("create ch2place", "", "", "");
+
+            send_expect_right_wrong ("(aeq '* 1 (*))", "", "", "");
+            send_expect_right_wrong ("(aeq '+ 32767 (+ 32765 1 1))", "", "", "");
+            send_expect_right_wrong ("(aeq '+ 0 (+))", "", "", "");
+            send_expect_right_wrong ("(aeq '+ -2 (+ -1 -1))", "", "", "");
         });
         Button mMapToHS = view.findViewById(R.id.ch2maphs);
         mMapToHS.setOnClickListener(view18 -> {
