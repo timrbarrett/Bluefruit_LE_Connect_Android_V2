@@ -92,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#FFC107"
-                    android:text="def test" />
+                    android:text="63" />
 
                 <Button
                     android:id="@+id/pulseoff"
@@ -139,7 +139,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#FFC107"
-                    android:text="single test" />
+                    android:text="64" />
             </TableRow>
 
             <TableRow
@@ -172,7 +172,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#FFC107"
-                    android:text="multi line" />
+                    android:text="65" />
             </TableRow>
 
             <TableRow
